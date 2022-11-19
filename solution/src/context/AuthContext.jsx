@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { toastNotify } from "../helper/Toastify";
 import axios from "axios";
 import { redirect } from "react-router-dom";
@@ -9,6 +9,23 @@ const baseUrl = "https://20001.fullstack.clarusway.com/";
 
 const AuthContextProvider = ({ children }) => {
 	const [userInfo, setUserInfo] = useState(null);
+
+	const checkUser = () => {
+		if (userInfo) {
+			localStorage.setItem("user", JSON.stringify(userInfo));
+		} else {
+			const user = localStorage.getItem("user");
+			if (user) {
+				setUserInfo(JSON.parse(user));
+			}
+		}
+	};
+
+	if (!userInfo) checkUser();
+
+	useEffect(() => {
+		checkUser();
+	}, [userInfo]);
 
 	const registerUser = async (userData, navigate) => {
 		console.log(userData);
@@ -48,6 +65,7 @@ const AuthContextProvider = ({ children }) => {
 	};
 
 	const logout = async (navigate) => {
+		localStorage.removeItem("user");
 		setUserInfo(null);
 		toastNotify("User logged out successfully", "success");
 		navigate("/");

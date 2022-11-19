@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   Button,
   Card,
@@ -12,8 +12,21 @@ import {
 import { Layout } from '../components/';
 import { AiOutlineSend } from 'react-icons/ai';
 import { BiLike, BiCommentDots, BiBullseye } from 'react-icons/bi';
+import { useParams } from 'react-router-dom';
+import { BlogContext } from '../context/BlogContext';
 
 const BlogCardDetails = () => {
+  const {id} = useParams();
+
+  const {getSingleBlog, currentBlog} = useContext(BlogContext)
+
+  useEffect(() =>{
+    if (id) getSingleBlog(id);
+  }, [id])
+
+
+
+
   return (
     <Layout>
       <Card
@@ -23,7 +36,7 @@ const BlogCardDetails = () => {
         }}
       >
         <CardImg
-          src="https://clarusway.com/wp-content/uploads/2022/02/Adsiz-tasarim-4.png"
+          src={currentBlog?.image}
           alt="post_image"
           style={{
             height: '20rem',
@@ -42,26 +55,26 @@ const BlogCardDetails = () => {
             }}
           >
             <CardTitle tag="h3" className="text-center">
-              Title
+              {currentBlog?.title}
             </CardTitle>
             <div className="d-flex justify-content-between">
-              <CardSubtitle className="text-muted">Author: author</CardSubtitle>
-              <CardSubtitle className="text-muted">publish date</CardSubtitle>
+              <CardSubtitle className="text-muted">Author: {currentBlog?.author}</CardSubtitle>
+              <CardSubtitle className="text-muted">{new Date(currentBlog?.published_date).toLocaleString()}</CardSubtitle>
             </div>
-            <CardText className="mt-4">content</CardText>
+            <CardText className="mt-4">{currentBlog?.content}</CardText>
           </CardBody>
         </div>
         <div className="d-flex gap-2">
           <span className="d-flex align-items-center justify-content-center">
-            1
+          {currentBlog?.like_count}
             <BiLike className="fs-4" />
           </span>
           <span>
-            2
+          {currentBlog?.comment_count}
             <BiCommentDots className="fs-4" />
           </span>
           <span>
-            3
+          {currentBlog?.view_count}
             <BiBullseye className="fs-4" />
           </span>
         </div>
